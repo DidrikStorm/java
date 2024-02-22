@@ -1,0 +1,11 @@
+plugins {
+    id 'application'
+}
+
+application {
+    mainClass = 'RaceWinner'
+}
+
+run {
+    standardInput = System.in
+}
