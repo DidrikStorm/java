@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 public class RaceWinner {
     public static void main(String[] args) {
@@ -41,11 +42,12 @@ public class RaceWinner {
     public static void readAndSortTextFile() {
         Scanner inputScanner = new Scanner(System.in);
 
-        System.out.print("Enter the name of the file (including file extension): ");
+        System.out.print("Enter the name of the file: ");
         String fileName = inputScanner.next();
         fileName += ".txt";
 
         Map<String, Integer> totalTimeMap = new HashMap<>();
+        Map<String, Integer> raceCountMap = new HashMap<>(); // Håll koll på antalet lopp för varje deltagare
 
         try {
             Scanner fileScanner = new Scanner(new File(fileName));
@@ -61,18 +63,39 @@ public class RaceWinner {
 
                     int resultTime = calculateResultTime(startTime, endTime);
 
-                    // Uppdatera totaltid för den här deltagaren
+                    // Uppdatera den totala tiden för denna deltagare
                     totalTimeMap.put(name, totalTimeMap.getOrDefault(name, 0) + resultTime);
+
+                    // Öka antalet lopp för denna deltagare
+                    raceCountMap.put(name, raceCountMap.getOrDefault(name, 0) + 1);
                 } else {
-                    System.err.println("Invalid row format:" + line);
+                    System.err.println("Invalid line format: " + line);
                 }
             }
 
             fileScanner.close();
 
-            // Skriv ut totaltid för varje deltagare
+            // Skriv ut totaltid för varje deltagare som deltog i alla 3 loppen
+            TreeMap<Integer, String> sortedByTotalTime = new TreeMap<>();
             for (Map.Entry<String, Integer> entry : totalTimeMap.entrySet()) {
-                System.out.println("Totaltime for " + entry.getKey() + ": " + entry.getValue() + " seconds");
+                String name = entry.getKey();
+                int totalTime = entry.getValue();
+                int raceCount = raceCountMap.getOrDefault(name, 0); // Få loppräkningen för denna deltagare
+
+                if (raceCount == 3) { // Tänk bara på deltagare som tävlat i alla 3 loppen
+                    sortedByTotalTime.put(totalTime, name);
+                }
+            }
+
+            // Skriv ut de 3 snabbaste deltagarna
+            int count = 0;
+            for (int totalTime : sortedByTotalTime.keySet()) {
+                String name = sortedByTotalTime.get(totalTime);
+                System.out.println("Total time for " + name + ": " + totalTime + " seconds");
+                count++;
+                if (count == 3) {
+                    break;
+                }
             }
 
             System.out.println("\nReturning to Main Menu...\n");
@@ -80,10 +103,9 @@ public class RaceWinner {
             System.err.println("File not found: " + fileName);
             e.printStackTrace();
         } finally {
-            inputScanner.nextLine(); // Konsumera det återstående nytecknet
+            inputScanner.nextLine(); // Konsumera det återstående nyradstecknet
         }
     }
-
     public static int calculateResultTime(String startTime, String endTime) {
         try {
             // Analysera starttid och sluttid för att beräkna resultatet
