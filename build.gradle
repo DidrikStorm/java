@@ -9,3 +9,9 @@ application {
 run {
     standardInput = System.in
 }
+
+jar {
+    manifest{
+        attributes 'Main-Class': 'RaceWinner'
+    }
+}

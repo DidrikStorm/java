@@ -115,15 +115,15 @@ public class RaceWinner {
         }
 
         // Skriv ut de 3 snabbaste deltagarna
-        int count = 0;
+        int count = 1;
         System.out.println("Top 3 of races:");
         for (int totalTime : sortedByTotalTime.keySet()) {
             String name = sortedByTotalTime.get(totalTime);
-            System.out.println("Total time for " + name + ": " + totalTime + " seconds");
-            count++;
+            System.out.println(count + " place with Total time for " + name + ": " + totalTime + " seconds");
             if (count == 3) {
                 break;
             }
+            count++;
         }
 
         System.out.println("\nReturning to Main Menu...\n");
